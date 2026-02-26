@@ -5,21 +5,46 @@ import Task2 from '../components/task2';
 import Task3 from '../components/task3';
 import SongCard from '../components/task4';
 import TestCpn from '../components/test';
+import ObjectPropDemo from '../components/objectpropdemo';
+import Testfunctionprop from '../components/functionprop';
+import NutNhan from '../components/testcomponentsbutton';
+import Task5 from '../components/task5';
+import ClockTask from '../components/clockTask';
+import ApiCall from '../components/APICALL'
+import BaiTap1 from '../components/BaiTap1'
+import BaiTap2 from '../components/BaiTap2'
+import BaiTap3 from '../components/BaiTap3'
+import BaiTap5 from '../components/BaiTap5'
 const username = "PHAM THANG"
 const valuetest = 10;
+
 const testobj = { name: "phamthang", age: 20 }
+
+
+
 function testvaluereturnf() {
   return (2)
 }
-
+function testlog() {
+  console.log("HELLO WORLD!")
+}
 const styles = StyleSheet.create({
 
 })
+
+
+
+
+
+
+
+
 export default function Index() {
   return (
     <ScrollView>
       <View>
-        <Text style={{ fontSize: 20, color: "red", backgroundColor: "yellow" }}>Hello {username}!</Text>
+
+        {/* <Text style={{ fontSize: 20, color: "red", backgroundColor: "yellow" }}>Hello {username}!</Text>
         <Button color="blue" title="Click me" onPress={() => alert("hello")} />
         <TestCpn />
         <Task2 />
@@ -34,7 +59,21 @@ export default function Index() {
         ))}
         {eventlist.map((item, index) => (
           <EventCard key={index} name={item.name} isActive={item.isActive} />
-        ))}
+        ))} */}
+        {/* <ObjectPropDemo myobj={testobj} />
+        <Testfunctionprop testStr="TEST TESTGF" functionprop={testlog} />
+        <Testfunctionprop testStr="TEST TESTGF" functionprop={() => { console.log("TEST FUNCTION LOG") }} /> */}
+        {/* <Button title="ĐĂNG NHẬP" onPress={() => { console.log("Đã Nhấn Đăng nhập") }}></Button>
+        <NutNhan tieude="ĐĂNG KÝ" sukiennhan={() => { console.log("TEST ĐĂNG KÝ") }} /> */}
+        {/* <Text>TEST</Text>
+        <NutNhan /> */}
+        {/* <Task5 /> */}
+        {/* <ClockTask /> */}
+        {/* <ApiCall /> */}
+        {/* <BaiTap1 /> */}
+        {/* <BaiTap2 /> */}
+        {/* <BaiTap3 /> */}
+        <BaiTap5 />
       </View>
     </ScrollView >
   )
@@ -94,3 +133,5 @@ const listSong = [{
   artist: "Artist 10",
 
 }]
+
+
