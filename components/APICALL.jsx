@@ -9,9 +9,11 @@ export default function ApiCall() {
     useEffect(() => {
         axios.get(`${baseUrl}/breeds`,
             {
-                page: {
-                    number: 1,
-                    size: 10
+                params: {
+                    page: {
+                        number: 1,
+                        size: 10
+                    }
                 }
 
             }
