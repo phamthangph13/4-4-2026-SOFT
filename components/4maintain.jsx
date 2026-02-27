@@ -18,19 +18,22 @@ export default function Maintain() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "space-between",
+        justifyContent: "space-between", //Trục chinhs Y
+        backgroundColor: "yellow",
     },
     row_1: {
+        backgroundColor: "red",
+
         flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "flex-start"
+        gap: 10,
+        justifyContent: "space-between", //Trục ngang Y
+
     },
     row_2: {
-
-
+        backgroundColor: "red",
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "flex-end"
+
     },
 
     box: {
