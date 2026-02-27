@@ -3,13 +3,13 @@ import { StyleSheet, View, Text } from "react-native";
 export default function Maintain() {
     return (
         <View style={styles.container}>
-            <View style={styles.top}>
-                <View style={styles.topleft}></View>
-                <View style={styles.topright}></View>
+            <View style={styles.row_1}>
+                <View style={styles.box}></View>
+                <View style={styles.box}></View>
             </View>
-            <View style={styles.bottom}>
-                <View style={styles.bottomleft}></View>
-                <View style={styles.bottomright}></View>
+            <View style={styles.row_2}>
+                <View style={styles.box}></View>
+                <View style={styles.box}></View>
             </View>
         </View>
     )
@@ -17,40 +17,29 @@ export default function Maintain() {
 
 const styles = StyleSheet.create({
     container: {
-        height: 500,
-        padding: 10,
-        gap: 10
+        flex: 1,
+        justifyContent: "space-between",
     },
-    top: {
+    row_1: {
         flexDirection: "row",
-        height: 100,
-        gap: 10
+        justifyContent: "space-between",
+        alignItems: "flex-start"
     },
-    topleft: {
-        flex: 1,
-        backgroundColor: "red",
-        borderRadius: 10
-    },
-    topright: {
-        flex: 1,
-        backgroundColor: "blue",
-        borderRadius: 10
-    },
-    bottom: {
+    row_2: {
+
+
         flexDirection: "row",
-        height: 100,
-        gap: 10
+        justifyContent: "space-between",
+        alignItems: "flex-end"
     },
-    bottomleft: {
-        flex: 1,
+
+    box: {
+        BorderRadius: 10,
+        height: 100,
+        width: 100,
         backgroundColor: "green",
-        borderRadius: 10
-    },
-    bottomright: {
-        flex: 1,
-        backgroundColor: "yellow",
-        borderRadius: 10
     }
+
 
 })
 
