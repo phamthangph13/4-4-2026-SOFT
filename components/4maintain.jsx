@@ -29,10 +29,12 @@ const styles = StyleSheet.create({
     topleft: {
         flex: 1,
         backgroundColor: "red",
+        borderRadius: 10
     },
     topright: {
         flex: 1,
         backgroundColor: "blue",
+        borderRadius: 10
     },
     bottom: {
         flexDirection: "row",
@@ -42,10 +44,12 @@ const styles = StyleSheet.create({
     bottomleft: {
         flex: 1,
         backgroundColor: "green",
+        borderRadius: 10
     },
     bottomright: {
         flex: 1,
         backgroundColor: "yellow",
+        borderRadius: 10
     }
 
 })
