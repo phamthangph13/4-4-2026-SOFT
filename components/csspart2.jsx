@@ -14,15 +14,14 @@ const styles = StyleSheet.create({
     container: {
         display: "flex",
         flexDirection: "row",
+        height: 100,
     },
     box1: {
-        width: 35,
-        height: 100,
+        flex: 0.1,
         backgroundColor: "blue",
     },
     box2: {
-        width: 100,
-        height: 100,
+        flex: 0.3,
         backgroundColor: "red",
     }
 })
