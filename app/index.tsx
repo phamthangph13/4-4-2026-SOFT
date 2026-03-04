@@ -18,6 +18,7 @@ import BaiTap5 from '../components/BaiTap5'
 import LophocCSS from '../components/lophocsscungphuc'
 import CSSPart2 from '../components/csspart2'
 import Maintain from '../components/4maintain'
+import TextCource from '../components/TextCource'
 const username = "PHAM THANG"
 const valuetest = 10;
 
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
 
 export default function Index() {
   return (
-    <Maintain></Maintain>
+    <TextCource></TextCource>
   )
 }
 

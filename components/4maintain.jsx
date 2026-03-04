@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     },
 
     box: {
-        BorderRadius: 10,
+        borderRadius: 10,
         height: 100,
         width: 100,
         backgroundColor: "green",
