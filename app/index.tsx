@@ -19,6 +19,14 @@ import LophocCSS from '../components/lophocsscungphuc'
 import CSSPart2 from '../components/csspart2'
 import Maintain from '../components/4maintain'
 import TextCource from '../components/TextCource'
+import TextGHK from '../components/TextInputSk';
+import CardItems from '../components/cardView'
+import ButtonVG from '../components/ButtonVG'
+import OpacityVG from '../components/OpacityVG'
+import TopHightLight from '../components/TopHightlightVG'
+import PressAbleVG from '../components/PressAble'
+
+import FlashListLF from '../components/FlashList'
 const username = "PHAM THANG"
 const valuetest = 10;
 
@@ -45,7 +53,7 @@ const styles = StyleSheet.create({
 
 export default function Index() {
   return (
-    <TextCource></TextCource>
+    <FlashListLF></FlashListLF>
   )
 }
 
