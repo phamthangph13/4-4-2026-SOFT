@@ -1,140 +1,122 @@
-import { View, Text, TextInput, Button, StyleSheet, FlatList } from "react-native";
-import { useState, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
 
+// Import thư viện chuẩn mới
+import * as SQLite from 'expo-sqlite';
 
+export default function App() {
+  const [db, setDb] = useState(null);
+  const [tasks, setTasks] = useState([]);
+  const [inputText, setInputText] = useState('');
 
-
-export default function Index() {
-  const [jobs, setJobs] = useState([]);
-  const [inputText, setInputText] = useState("");
-  const [inputText2, setInputText2] = useState("");
+  // ------------------------------------------------------------------
+  // QUY TRÌNH 1: KHỞI TẠO KẾT NỐI VÀ TẠO BẢNG
+  // ------------------------------------------------------------------
   useEffect(() => {
-    loadJob()
+    const initDB = async () => {
+      try {
+        // Mở kết nối Database (Cú pháp mới)
+        const database = await SQLite.openDatabaseAsync('TodoList.db');
+        setDb(database);
+
+        // Tạo bảng nếu chưa có (Dùng execAsync cho các lệnh không cần tham số)
+        await database.execAsync(`
+          PRAGMA journal_mode = WAL;
+          CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT);
+        `);
+
+        // Tải dữ liệu ban đầu
+        fetchTasks(database);
+      } catch (error) {
+        Alert.alert('Lỗi', 'Không thể khởi tạo cơ sở dữ liệu.');
+      }
+    };
+    initDB();
   }, []);
 
-  async function addJob() {
-    const newJob = {
-      id: Date.now(),
-      name: inputText,
-      name2: inputText2
-    }
-    setJobs([...jobs, newJob])
+  // ------------------------------------------------------------------
+  // QUY TRÌNH 2: LẤY DỮ LIỆU TỪ BẢNG (SELECT)
+  // ------------------------------------------------------------------
+  const fetchTasks = async (database) => {
     try {
-      await AsyncStorage.setItem("jobs", JSON.stringify(jobs))
+      // Dùng getAllAsync để lấy mảng kết quả
+      const allRows = await database.getAllAsync('SELECT * FROM tasks ORDER BY id DESC');
+      setTasks(allRows); // allRows là một mảng: [{id: 1, title: 'Học React Native'}, ...]
     } catch (error) {
-      console.log(error)
+      console.log('Lỗi lấy dữ liệu', error);
     }
+  };
 
-  }
-
-  async function loadJob() {
+  // ------------------------------------------------------------------
+  // QUY TRÌNH 3: THÊM DỮ LIỆU (INSERT)
+  // ------------------------------------------------------------------
+  const addTask = async () => {
+    if (inputText.trim() === '') return;
     try {
-      const data = await AsyncStorage.getItem("jobs")
-      if (data) {
-        setJobs(JSON.parse(data))
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
+      // Dùng runAsync kèm tham số để chống SQL Injection
+      await db.runAsync('INSERT INTO tasks (title) VALUES (?)', [inputText.trim()]);
 
-  async function deleteJob(id) {
-    const newJobs = jobs.filter((job) => job.id !== id)
-    setJobs(newJobs)
+      setInputText('');
+      fetchTasks(db); // Cập nhật lại danh sách trên màn hình
+    } catch (error) {
+      Alert.alert('Lỗi', 'Không thể thêm công việc.');
+    }
+  };
+
+  // ------------------------------------------------------------------
+  // QUY TRÌNH 4: XÓA DỮ LIỆU (DELETE)
+  // ------------------------------------------------------------------
+  const deleteTask = async (id) => {
     try {
-      await AsyncStorage.setItem("jobs", JSON.stringify(newJobs))
+      await db.runAsync('DELETE FROM tasks WHERE id = ?', [id]);
+      fetchTasks(db); // Cập nhật lại danh sách trên màn hình
     } catch (error) {
-      console.log(error)
+      Alert.alert('Lỗi', 'Không thể xóa công việc.');
     }
-  }
-
-  async function updateJob(id) {
-    const newJobs = jobs.map((job) => {
-      if (job.id === id) {
-        return {
-          ...job,
-          name: inputText
-        }
-      }
-      return job
-    })
-    setJobs(newJobs)
-    try {
-      await AsyncStorage.setItem("jobs", JSON.stringify(newJobs))
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  async function sortJob() {
-    try {
-      const newJobs = jobs.sort((a, b) => a.name.localeCompare(b.name))
-      setJobs(newJobs)
-      await AsyncStorage.setItem("jobs", JSON.stringify(newJobs))
-      loadJob()
-    } catch (error) {
-      throw error;
-    }
-  }
-
+  };
+  // ------------------------------------------------------------------
+  // GIAO DIỆN (UI)
+  // ------------------------------------------------------------------
   return (
     <View style={styles.container}>
-      <Text>NHẬP VÀO CÔNG VIỆC MỚI</Text>
-      <TextInput value={inputText} onChangeText={setInputText} style={styles.text} placeholder="Nhập công việc mới"></TextInput>
-      <TextInput value={inputText2} onChangeText={setInputText2} style={styles.text} placeholder="Nhập người thực hiện"></TextInput>
-      <View style={styles.buttonContainer}>
-        <Button title="THÊM CÔNG VIỆC" onPress={addJob}></Button>
-        <Button title="TẢI LẠI" onPress={loadJob}></Button>
-        <Button title="Sort A-Z" onPress={() => sortJob()}></Button>
+      <Text style={styles.header}>To-Do List (SQLite Modern API)</Text>
 
-      </View>
+      <TextInput
+        style={styles.input}
+        placeholder="Nhập công việc..."
+        value={inputText}
+        onChangeText={setInputText}
+      />
+
+      <TouchableOpacity style={styles.saveButton} onPress={addTask}>
+        <Text style={styles.buttonText}>THÊM CÔNG VIỆC</Text>
+      </TouchableOpacity>
+
       <FlatList
-        data={jobs}
-        renderItem={({ item }) =>
-          <View style={styles.item}>
-            <Text>{item.name}</Text>
-            <Text>{item.name2}</Text>
-            <Button title="XÓA" onPress={() => deleteJob(item.id)}></Button>
-            <Button title="CẬP NHẬT" onPress={() => updateJob(item.id)}></Button>
-
-          </View>}
-        keyExtractor={(item) => item.id}
-      ></FlatList>
+        data={tasks}
+        keyExtractor={(item) => item.id.toString()} // Phải ép kiểu chuỗi cho ID
+        renderItem={({ item }) => (
+          <View style={styles.taskItem}>
+            <Text style={styles.taskText}>{item.title}</Text>
+            <TouchableOpacity style={styles.deleteButton} onPress={() => deleteTask(item.id)}>
+              <Text style={styles.buttonSmallText}>XÓA</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      />
     </View>
-  )
+  );
 }
 
+// Stylesheet giữ nguyên như các phần trước
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-
-  },
-  text: {
-    fontSize: 20,
-    color: "black",
-  },
-  item: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
-  template: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 10,
-    backgroundColor: "#4abbf3ff",
-    borderRadius: 10,
-  }
-})
+  container: { flex: 1, paddingTop: 60, paddingHorizontal: 20, backgroundColor: '#ffffff' },
+  header: { fontSize: 22, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 },
+  input: { borderWidth: 1, borderColor: '#cccccc', padding: 12, marginBottom: 15, borderRadius: 4, fontSize: 16 },
+  saveButton: { backgroundColor: '#4e92ef', padding: 15, alignItems: 'center', marginBottom: 10, borderRadius: 4 },
+  buttonText: { color: '#ffffff', fontWeight: 'bold', fontSize: 14 },
+  taskItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: '#eeeeee' },
+  taskText: { fontSize: 16, color: '#333333', flex: 1 },
+  deleteButton: { backgroundColor: '#e74c3c', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 4 },
+  buttonSmallText: { color: '#ffffff', fontWeight: 'bold', fontSize: 11 },
+});
