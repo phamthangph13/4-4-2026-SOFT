@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function Index() {
   const [jobs, setJobs] = useState([]);
   const [inputText, setInputText] = useState("");
+  const [inputText2, setInputText2] = useState("");
   useEffect(() => {
     loadJob()
   }, []);
@@ -15,7 +16,8 @@ export default function Index() {
   async function addJob() {
     const newJob = {
       id: Date.now(),
-      name: inputText
+      name: inputText,
+      name2: inputText2
     }
     setJobs([...jobs, newJob])
     try {
@@ -65,19 +67,37 @@ export default function Index() {
     }
   }
 
+  async function sortJob() {
+    try {
+      const newJobs = jobs.sort((a, b) => a.name.localeCompare(b.name))
+      setJobs(newJobs)
+      await AsyncStorage.setItem("jobs", JSON.stringify(newJobs))
+      loadJob()
+    } catch (error) {
+      throw error;
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text>NHẬP VÀO CÔNG VIỆC MỚI</Text>
       <TextInput value={inputText} onChangeText={setInputText} style={styles.text} placeholder="Nhập công việc mới"></TextInput>
-      <Button title="THÊM CÔNG VIỆC" onPress={addJob}></Button>
-      <Button title="TẢI LẠI" onPress={loadJob}></Button>
+      <TextInput value={inputText2} onChangeText={setInputText2} style={styles.text} placeholder="Nhập người thực hiện"></TextInput>
+      <View style={styles.buttonContainer}>
+        <Button title="THÊM CÔNG VIỆC" onPress={addJob}></Button>
+        <Button title="TẢI LẠI" onPress={loadJob}></Button>
+        <Button title="Sort A-Z" onPress={() => sortJob()}></Button>
+
+      </View>
       <FlatList
         data={jobs}
         renderItem={({ item }) =>
           <View style={styles.item}>
-            <TextInput value={item.name} onChangeText={setInputText} style={styles.text} placeholder="Nhập công việc mới"></TextInput>
+            <Text>{item.name}</Text>
+            <Text>{item.name2}</Text>
             <Button title="XÓA" onPress={() => deleteJob(item.id)}></Button>
             <Button title="CẬP NHẬT" onPress={() => updateJob(item.id)}></Button>
+
           </View>}
         keyExtractor={(item) => item.id}
       ></FlatList>
@@ -108,5 +128,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 10,
+    backgroundColor: "#4abbf3ff",
+    borderRadius: 10,
   }
 })
