@@ -37,6 +37,34 @@ export default function Index() {
     }
   }
 
+  async function deleteJob(id) {
+    const newJobs = jobs.filter((job) => job.id !== id)
+    setJobs(newJobs)
+    try {
+      await AsyncStorage.setItem("jobs", JSON.stringify(newJobs))
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function updateJob(id) {
+    const newJobs = jobs.map((job) => {
+      if (job.id === id) {
+        return {
+          ...job,
+          name: inputText
+        }
+      }
+      return job
+    })
+    setJobs(newJobs)
+    try {
+      await AsyncStorage.setItem("jobs", JSON.stringify(newJobs))
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text>NHẬP VÀO CÔNG VIỆC MỚI</Text>
@@ -45,7 +73,12 @@ export default function Index() {
       <Button title="TẢI LẠI" onPress={loadJob}></Button>
       <FlatList
         data={jobs}
-        renderItem={({ item }) => <Text>{item.name}</Text>}
+        renderItem={({ item }) =>
+          <View style={styles.item}>
+            <TextInput value={item.name} onChangeText={setInputText} style={styles.text} placeholder="Nhập công việc mới"></TextInput>
+            <Button title="XÓA" onPress={() => deleteJob(item.id)}></Button>
+            <Button title="CẬP NHẬT" onPress={() => updateJob(item.id)}></Button>
+          </View>}
         keyExtractor={(item) => item.id}
       ></FlatList>
     </View>
@@ -61,6 +94,19 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 20,
-    color: "white",
+    color: "black",
+  },
+  item: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  template: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   }
 })
